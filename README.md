@@ -18,86 +18,116 @@ Este sistema busca ofrecer **recomendaciones inteligentes** integrando tres para
 - Diseñar una **ontología agrícola** con entidades, relaciones e individuos.  
 - Modelar variables ambientales con **lógica difusa** y generar salidas interpretables.  
 - Implementar un **sistema experto basado en reglas** que integre hechos de la ontología y condiciones difusas.  
-- Ejecutar un **caso de prueba** que muestre recomendaciones agrícolas.  
+- Ejecutar un **caso de prueba completo** que muestre recomendaciones agrícolas en escenarios realistas.  
 
 ---
 
 ## 📂 Organización del proyecto
-El proyecto está implementado en **Google Colab** dentro de un único notebook:
 ```plaintext
 Asistente-Agricola/
 │
-├── README.md                # Guía del proyecto y checklist del equipo
-├── Asistente_Agrícola.ipynb # Notebook con todo el código y la demo final
-└── LICENSE                  # Licensia
+├── README.md          # Guía del proyecto y checklist del equipo
+├── requirements.txt   # Dependencias del proyecto
+│
+├── ontology/          # Ontología en RDF/OWL-RL
+│   ├── agro.ttl
+│   ├── build_ontology.py
+│   ├── reason.py
+│   └── mapping.py
+│
+├── fuzzy/             # Modelo difuso
+│   ├── fuzzy_model.py
+│   └── plots/*.png
+│
+├── expert/            # Sistema experto (Experta)
+│   ├── hechos.py
+│   ├── reglas.py
+│   ├── engine.py
+│   └── integracion.py
+│
+├── app.py             # Script principal de integración
+└── docs/              # Documentación y entregables
+    └── diseño.pdf
 ```
 
 ---
 
-## 🧩 Estructura del Notebook
-El notebook se organiza en secciones:
+## 🛠️ Configuración de entorno virtual
 
-1. **Introducción al dominio**  
-   - Planteamiento del problema y objetivos.  
+### 🔹 Opción 1: con `venv` (Python estándar)
+1. Crear entorno virtual:
+   ```bash
+   python -m venv .venv
+   ```
+2. Activar entorno virtual:  
+   - En Linux/Mac:
+     ```bash
+     source .venv/bin/activate
+     ```
+   - En Windows:
+     ```bash
+     .venv\Scripts\activate
+     ```
+3. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. **Ontología (RDFLib + OWL-RL)**  
-   - Definir clases (`Cultivo`, `Suelo`, `Plaga`, `Estación`, `Fertilizante`, etc.).  
-   - Definir propiedades (`afectaA`, `requiereRiego`, `tieneHumedad`, etc.).  
-   - Instanciar individuos (ej: `Maiz1`, `SueloArenoso1`).  
-   - Ejecutar razonamiento y mostrar triples inferidos.  
-
-3. **Lógica Difusa (Scikit-Fuzzy)**  
-   - Variables: **Humedad**, **Temperatura**, **Radiación Solar**.  
-   - Definir funciones de pertenencia (triangular, trapezoidal, gaussiana).  
-   - Crear reglas difusas (ej: “Si humedad baja y temperatura alta → riego alto”).  
-   - Defuzzificación para obtener valores precisos.  
-
-4. **Sistema Experto (Experta)**  
-   - Definir clases de hechos y base inicial de ≥40 hechos.  
-   - Implementar ≥15 reglas con prioridades y control de ejecución.  
-   - Incluir hechos inferidos desde la ontología.  
-
-5. **Integración**  
-   - Traducir el grafo resultante de la ontología en hechos para el sistema experto.  
-   - Incorporar salidas de la lógica difusa como condiciones adicionales.  
-   - Ejecutar motor de reglas para obtener recomendaciones finales.  
-
-6. **Caso de Prueba Final**  
-   - Ejemplo: cultivo de maíz en suelo arcilloso, humedad baja, temperatura alta → **recomendar riego y fertilización ligera**.  
-
-7. **Conclusiones y próximos pasos**  
+### 🔹 Opción 2: con `conda`
+1. Crear entorno:
+   ```bash
+   conda create --name asistente_agricola python=3.10
+   ```
+2. Activar entorno:
+   ```bash
+   conda activate asistente_agricola
+   ```
+3. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ---
 
-## ✅ Checklist del equipo
-- [ ] Crear ontología `.ttl` con al menos 10 clases, 10 propiedades y 5 jerarquías.  
-- [ ] Instanciar al menos 4 individuos por clase.  
-- [ ] Aplicar razonador OWL-RL y documentar inferencias.  
-- [ ] Definir 3 variables difusas con funciones triangulares, trapezoidales y gaussianas.  
-- [ ] Escribir al menos 9 reglas difusas (AND, OR, NOT).  
-- [ ] Definir ≥40 hechos para el sistema experto.  
-- [ ] Implementar ≥15 reglas con diferentes prioridades y evitar conflictos.  
-- [ ] Traducir hechos inferidos de la ontología al sistema experto.  
-- [ ] Integrar resultados difusos como condiciones en reglas.  
-- [ ] Ejecutar un caso de prueba completo en el notebook.  
-- [ ] Preparar video pitch (máx. 5 min) con demo y explicación.  
+## ✅ Dependencias principales (`requirements.txt`)
+```txt
+experta
+rdflib
+owlrl
+scikit-fuzzy
+matplotlib
+```
 
 ---
 
 ## 🚀 Flujo de Ejecución
-1. Construir ontología y ejecutar razonamiento OWL-RL.  
-2. Exportar triples como hechos iniciales del sistema experto.  
-3. Evaluar condiciones ambientales con lógica difusa.  
-4. Alimentar el sistema experto con hechos + resultados difusos.  
-5. Activar reglas e inferir recomendaciones agrícolas.  
-6. Mostrar salida final en el notebook (ejemplo práctico).  
+1. Construir y razonar ontología:
+   ```bash
+   python ontology/build_ontology.py
+   python ontology/reason.py
+   ```
+
+2. Ejecutar sistema difuso:
+   ```bash
+   python fuzzy/fuzzy_model.py
+   ```
+
+3. Probar sistema experto:
+   ```bash
+   python expert/engine.py
+   ```
+
+4. Integración completa (pipeline):
+   ```bash
+   python app.py
+   ```
 
 ---
 
-👨‍💻 **Equipo de desarrollo**:
-- *Luis Alejandro Martínez Ramírez*
-- *Juan Felipe Miranda ?*
-- *Daniel Felipe ?*
-- *Harrison ?*  
-📅 **Entrega**: 23 de septiembre, 9:50 am  
+## 👨‍💻 Equipo de desarrollo
+- *Luis Alejandro Martínez Ramírez*  
+- *Juan Felipe Miranda*  
+- *Daniel Felipe Garzón Acosta*  
+- *Harrison [Apellido]*  
 
+📅 **Entrega**: 23 de septiembre, 9:50 am  
