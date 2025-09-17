@@ -1,0 +1,40 @@
+
+
+# Entorno virtual
+.venv/
+env/
+venv/
+
+# Archivos de dependencias de Conda
+*.conda
+*.yml
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Archivos de Jupyter
+.ipynb_checkpoints/
+*.ipynb_save
+
+# Archivos temporales y de logs
+*.log
+*.tmp
+*.swp
+
+# Archivos de configuración locales
+*.env
+*.DS_Store
+
+# Resultados de ejecución
+*.png
+*.jpg
+*.jpeg
+*.csv
+*.out
+
+# Documentación generada
+docs/_build/
