@@ -1,133 +1,86 @@
-# 🌱 Asistente Agrícola: Sistema Híbrido de IA para Cultivo Agrícola
+# 🌱 Asistente Inteligente para Cultivo Agrícola
 
-Este proyecto implementa un **sistema híbrido de inteligencia artificial** que combina **Ontologías (RDF/OWL-RL)**, **Lógica Difusa (Scikit-Fuzzy)** y **Sistemas Expertos (Experta)** para apoyar la toma de decisiones en el cuidado de cultivos agrícolas.
+## 📌 Descripción General
+Este proyecto corresponde a la **Práctica 1** del curso *Introducción a la Inteligencia Artificial (3010476)* de la Universidad Nacional de Colombia.  
+El objetivo es implementar un **sistema híbrido de IA** que integre:
 
----
+- **Sistema experto (Experta – Python):** reglas basadas en hechos para decisiones agrícolas.  
+- **Lógica difusa (Scikit-Fuzzy):** modelado de incertidumbre en variables ambientales.  
+- **Ontología (RDFLib + OWL-RL):** representación semántica de cultivos, suelos, plagas y fertilizantes.  
 
-## 📌 Introducción al problema
-Los agricultores enfrentan condiciones inciertas como **humedad del suelo, temperatura ambiental y presencia de plagas**.  
-Este sistema busca ofrecer **recomendaciones inteligentes** integrando tres paradigmas de IA clásica:
-
-- **Ontologías** → Para representar el conocimiento agrícola (cultivos, suelos, plagas, fertilizantes).  
-- **Lógica Difusa** → Para modelar incertidumbre en variables del entorno (humedad, temperatura, radiación solar).  
-- **Sistema Experto** → Para inferir acciones recomendadas (riego, fertilización, control de plagas) a partir de hechos y reglas.  
+El dominio seleccionado es la **agricultura de cultivos básicos**, enfocado en la **gestión de riego y fertilización**.
 
 ---
 
 ## 🎯 Objetivos
-- Diseñar una **ontología agrícola** con entidades, relaciones e individuos.  
-- Modelar variables ambientales con **lógica difusa** y generar salidas interpretables.  
-- Implementar un **sistema experto basado en reglas** que integre hechos de la ontología y condiciones difusas.  
-- Ejecutar un **caso de prueba completo** que muestre recomendaciones agrícolas en escenarios realistas.  
+- Representar conocimiento agrícola mediante una ontología formal.  
+- Modelar variables inciertas (humedad, temperatura, radiación) con lógica difusa.  
+- Integrar razonamiento semántico y difuso en un sistema experto que sugiera acciones concretas (ejemplo: *“Activar riego y aplicar fertilizante nitrogenado”*).  
 
 ---
 
-## 📂 Organización del proyecto
-```plaintext
-Asistente-Agricola/
-│
-├── README.md          # Guía del proyecto y checklist del equipo
-├── requirements.txt   # Dependencias del proyecto
-│
-├── ontology/          # Ontología en RDF/OWL-RL
-│   ├── agro.ttl
-│   ├── build_ontology.py
-│   ├── reason.py
-│   └── mapping.py
-│
-├── fuzzy/             # Modelo difuso
-│   ├── fuzzy_model.py
-│   └── plots/*.png
-│
-├── expert/            # Sistema experto (Experta)
-│   ├── hechos.py
-│   ├── reglas.py
-│   ├── engine.py
-│   └── integracion.py
-│
-├── app.py             # Script principal de integración
-└── docs/              # Documentación y entregables
-    └── diseño.pdf
+## 🧩 Componentes dentro del Notebook
+Todo el desarrollo está contenido en **`Asistente_Agricola.ipynb`**, dividido en secciones:
+
+### 1. Ontología y Razonamiento (RDFLib + OWL-RL)
+- ≥10 clases, ≥10 propiedades con `domain` y `range`, ≥5 jerarquías, ≥4 individuos/clase.  
+- Inferencias automáticas con **DeductiveClosure(RDFS_Semantics)**.  
+- Comparación de grafo antes y después del razonamiento.  
+
+### 2. Lógica Difusa (Scikit-Fuzzy)
+- 3 variables difusas (`Humedad`, `Temperatura`, `Radiación`).  
+- Funciones de pertenencia: triangular, trapezoidal, gaussiana.  
+- Uso de modificadores (*muy*, *ligeramente*).  
+- ≥9 reglas con operadores `AND`, `OR`, `NOT`.  
+- Defuzzificación con el método del centroide.  
+
+### 3. Sistema Experto (Experta)
+- ≥5 clases de hechos y ≥40 hechos iniciales.  
+- ≥15 reglas con 3 niveles de prioridad (`salience`).  
+- Dos técnicas de control de ejecución y manejo de conflictos.  
+- Uso de hechos provenientes de la ontología y resultados difusos.  
+
+### 4. Integración
+- Hechos inferidos de la ontología → Sistema experto.  
+- Salidas del difuso → condiciones para activar reglas.  
+- Motor de inferencia produce recomendaciones agrícolas.  
+
+---
+
+## 📂 Archivos del Repositorio
+```
+.
+├── Asistente_Agricola.ipynb   # Notebook con todo el desarrollo (experto, difuso, ontología, integración)
+├── README.md                  # Este archivo
+├── requirements.txt           # Librerías necesarias
+└── LICENSE                    # Licencia del proyecto
 ```
 
 ---
 
-## 🛠️ Configuración de entorno virtual
-
-### 🔹 Opción 1: con `venv` (Python estándar)
-1. Crear entorno virtual:
+## ▶️ Ejecución
+1. Instalar dependencias:
    ```bash
-   python -m venv .venv
+   pip install experta rdflib owlrl scikit-fuzzy
    ```
-2. Activar entorno virtual:  
-   - En Linux/Mac:
-     ```bash
-     source .venv/bin/activate
-     ```
-   - En Windows:
-     ```bash
-     .venv\Scripts\activate
-     ```
-3. Instalar dependencias:
+2. Abrir y ejecutar el notebook:
    ```bash
-   pip install -r requirements.txt
-   ```
-
-### 🔹 Opción 2: con `conda`
-1. Crear entorno:
-   ```bash
-   conda create --name asistente_agricola python=3.10
-   ```
-2. Activar entorno:
-   ```bash
-   conda activate asistente_agricola
-   ```
-3. Instalar dependencias:
-   ```bash
-   pip install -r requirements.txt
+   jupyter notebook Asistente_Agricola.ipynb
    ```
 
 ---
 
-## ✅ Dependencias principales (`requirements.txt`)
-```txt
-experta
-rdflib
-owlrl
-scikit-fuzzy
-matplotlib
-```
+## 📑 Entregables
+- `Asistente_Agricola.ipynb` (notebook único con todo el código).  
+- `README.md` (instrucciones y documentación).  
+- `requirements.txt` (dependencias).  
+- `LICENSE`.  
+- Documento PDF de diseño (en Classroom).  
+- Video pitch de sustentación (enlace incluido en el PDF).  
 
 ---
 
-## 🚀 Flujo de Ejecución
-1. Construir y razonar ontología:
-   ```bash
-   python ontology/build_ontology.py
-   python ontology/reason.py
-   ```
-
-2. Ejecutar sistema difuso:
-   ```bash
-   python fuzzy/fuzzy_model.py
-   ```
-
-3. Probar sistema experto:
-   ```bash
-   python expert/engine.py
-   ```
-
-4. Integración completa (pipeline):
-   ```bash
-   python app.py
-   ```
-
----
-
-## 👨‍💻 Equipo de desarrollo
-- *Luis Alejandro Martínez Ramírez*  
-- *Juan Felipe Miranda*  
-- *Daniel Felipe Garzón Acosta*  
-- *Harrison [Apellido]*  
-
-📅 **Entrega**: 23 de septiembre, 9:50 am  
+## 👥 Autores
+- Grupo XX – Equipo YY  
+- Curso: **Introducción a la Inteligencia Artificial (3010476)**  
+- Profesor: Jaime Alberto Guzmán Luna, Ph.D.  
