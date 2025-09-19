@@ -35,6 +35,3 @@ __pycache__/
 *.jpeg
 *.csv
 *.out
-
-# Documentación generada
-docs/_build/
