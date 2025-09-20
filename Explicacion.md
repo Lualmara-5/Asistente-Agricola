@@ -1,4 +1,4 @@
-# Asistente Agrícola - Explicación del Código
+# 🌱 Asistente Agrícola - Explicación del Código
 
 Este documento explica paso a paso la implementación del proyecto **Asistente Agrícola**, desarrollado en Python sobre un entorno de Jupyter Notebook (Google Colab).  
 
@@ -7,7 +7,7 @@ El flujo del sistema está diseñado de la siguiente manera:
 
 ---
 
-## 1. Introducción
+## 📌 1. Introducción
 
 El proyecto busca implementar un **asistente agrícola inteligente** que apoye la toma de decisiones de los agricultores mediante tres componentes principales:
 
