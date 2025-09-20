@@ -1,5 +1,0 @@
-experta
-rdflib
-owlrl
-scikit-fuzzy
-matplotlib
