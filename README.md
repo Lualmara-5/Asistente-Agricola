@@ -22,28 +22,44 @@ El dominio seleccionado es la **agricultura de cultivos básicos**, enfocado en 
 ## 🧩 Componentes dentro del Notebook
 Todo el desarrollo está contenido en **`Asistente_Agricola.ipynb`**, dividido en secciones:
 
-### 1. Ontología y Razonamiento (RDFLib + OWL-RL)
-- ≥10 clases, ≥10 propiedades con `domain` y `range`, ≥5 jerarquías, ≥4 individuos/clase.  
-- Inferencias automáticas con **DeductiveClosure(RDFS_Semantics)**.  
-- Comparación de grafo antes y después del razonamiento.  
+### 1. Instalación de dependencias
+```bash
+!pip install git+https://github.com/nilp0inter/experta.git
+!pip install rdflib
+!pip install owlrl
+!pip install scikit-fuzzy
+!pip install matplotlib
+!pip install numpy
+```
 
-### 2. Lógica Difusa (Scikit-Fuzzy)
+### 2. Ontología y Razonamiento Semántico
+- Crear ontología en Turtle con:
+      - ≥10 clases (ej: Cultivo, Suelo, Plaga, Fertilizante…).
+      - ≥10 propiedades (con `domain` y `range`).
+      - Jerarquías (`rdfs:subClassOf`, `rdfs:subPropertyOf`).
+      - Individuos (≥4 por clase).
+- Aplicar **razonamiento** con `DeductiveClosure(RDFS_Semantics)`.
+- Comparar grafo antes y después → mostrar inferencias.
+
+### 3. Lógica Difusa (Scikit-Fuzzy)
 - 3 variables difusas (`Humedad`, `Temperatura`, `Radiación`).  
-- Funciones de pertenencia: triangular, trapezoidal, gaussiana.  
+- Universo de discurso y funciones de pertenencia (triangular, trapezoidal, gaussiana). 
 - Uso de modificadores (*muy*, *ligeramente*).  
 - ≥9 reglas con operadores `AND`, `OR`, `NOT`.  
-- Defuzzificación con el método del centroide.  
+- Proceso de defuzzificación (centroide).
+- Graficar funciones de pertenencia.
 
-### 3. Sistema Experto (Experta)
-- ≥5 clases de hechos y ≥40 hechos iniciales.  
-- ≥15 reglas con 3 niveles de prioridad (`salience`).  
-- Dos técnicas de control de ejecución y manejo de conflictos.  
-- Uso de hechos provenientes de la ontología y resultados difusos.  
+### 4. Sistema Experto (Experta)
+- Crear ≥5 clases de hechos (ej: `CultivoFact`, `SueloFact`, `PlagaFact`…).
+- Base de hechos inicial (≥40 hechos, incluyendo los inferidos de la ontología).
+- ≥15 reglas con diferentes prioridades (`salience`) y control de ejecución.
+- Reglas que usen resultados de ontología + lógica difusa.
+- Evitar conflictos (por ejemplo con control `halt()` o condiciones exclusivas).
 
-### 4. Integración
-- Hechos inferidos de la ontología → Sistema experto.  
-- Salidas del difuso → condiciones para activar reglas.  
-- Motor de inferencia produce recomendaciones agrícolas.  
+### 5. Integración
+- Traducir hechos de la ontología (triples inferidos) a hechos en Experta.
+- Pasar resultados del difuso (ej: “humedad baja”, “temperatura alta”) como condiciones.
+- El sistema experto combina todo y produce recomendaciones agrícolas (ej: *“Activar riego y aplicar fertilizante nitrogenado”*).
 
 ---
 
@@ -52,28 +68,14 @@ Todo el desarrollo está contenido en **`Asistente_Agricola.ipynb`**, dividido e
 .
 ├── Asistente_Agricola.ipynb   # Notebook con todo el desarrollo (experto, difuso, ontología, integración)
 ├── README.md                  # Este archivo
-├── requirements.txt           # Librerías necesarias
-└── LICENSE                    # Licencia del proyecto
+└── LICENSE                    # Licencia del proyecto (MIT)
 ```
-
----
-
-## ▶️ Ejecución
-1. Instalar dependencias:
-   ```bash
-   pip install experta rdflib owlrl scikit-fuzzy
-   ```
-2. Abrir y ejecutar el notebook:
-   ```bash
-   jupyter notebook Asistente_Agricola.ipynb
-   ```
 
 ---
 
 ## 📑 Entregables
 - `Asistente_Agricola.ipynb` (notebook único con todo el código).  
-- `README.md` (instrucciones y documentación).  
-- `requirements.txt` (dependencias).  
+- `README.md` (instrucciones y documentación).   
 - `LICENSE`.  
 - Documento PDF de diseño (en Classroom).  
 - Video pitch de sustentación (enlace incluido en el PDF).  
