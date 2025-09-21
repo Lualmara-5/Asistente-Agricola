@@ -272,50 +272,345 @@ En conjunto, estas propiedades permiten describir **atributos** (ej. pH, humedad
 
 #### 5. Instanciar individuos (>=4 individuos por clase principal)
 ```python
+# Cultivos
+cultivos = {
+    "Maiz": EX.Maiz,
+    "Trigo": EX.Trigo,
+    "Arroz": EX.Arroz,
+    "Frijol": EX.Frijol
+}
+for name, uri in cultivos.items():
+    g.add((uri, RDF.type, EX.Cultivo))
+    g.add((uri, RDFS.label, Literal(name)))
+    g.add((uri, FOAF.name, Literal(name)))
+
+# Suelos
+suelos = {
+    "SueloArcilloso": EX.SueloArcilloso,
+    "SueloArenoso": EX.SueloArenoso,
+    "SueloLimoso": EX.SueloLimoso,
+    "SueloFranco": EX.SueloFranco
+}
+for name, uri in suelos.items():
+    g.add((uri, RDF.type, EX.Suelo))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Plagas
+plagas = {
+    "Langosta": EX.Langosta,
+    "GusanoCogollero": EX.GusanoCogollero,
+    "MoscaBlanca": EX.MoscaBlanca,
+    "Roya": EX.Roya
+}
+for name, uri in plagas.items():
+    g.add((uri, RDF.type, EX.Plaga))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Fertilizantes
+fertilizantes = {
+    "Nitrogenado": EX.Nitrogenado,
+    "Fosfatado": EX.Fosfatado,
+    "Potasico": EX.Potasico,
+    "Compost": EX.Compost
+}
+for name, uri in fertilizantes.items():
+    g.add((uri, RDF.type, EX.Fertilizante))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# SistemaRiego
+sistemas = {
+    "RiegoPorGoteo": EX.RiegoPorGoteo,
+    "RiegoPorAspersion": EX.RiegoPorAspersion,
+    "RiegoManual": EX.RiegoManual,
+    "RiegoSubterraneo": EX.RiegoSubterraneo
+}
+for name, uri in sistemas.items():
+    g.add((uri, RDF.type, EX.SistemaRiego))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Nutrientes
+nutrientes = {
+    "Nitrogeno": EX.Nitrogeno,
+    "Fosforo": EX.Fosforo,
+    "Potasio": EX.Potasio,
+    "Calcio": EX.Calcio
+}
+for name, uri in nutrientes.items():
+    g.add((uri, RDF.type, EX.Nutriente))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# PracticasAgricolas
+practicas = {
+    "Labranza": EX.Labranza,
+    "SiembraDirecta": EX.SiembraDirecta,
+    "RotacionCultivos": EX.RotacionCultivos,
+    "CoberturaSuelo": EX.CoberturaSuelo
+}
+for name, uri in practicas.items():
+    g.add((uri, RDF.type, EX.PracticaAgricola))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Climas
+climas = {
+    "Tropical": EX.Tropical,
+    "Seco": EX.Seco,
+    "Humedo": EX.Humedo,
+    "Templado": EX.Templado
+}
+for name, uri in climas.items():
+    g.add((uri, RDF.type, EX.Clima))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Beneficios (organismos beneficiosos)
+beneficios = {
+    "Abeja": EX.Abeja,
+    "Mariquita": EX.Mariquita,
+    "Lombriz": EX.Lombriz,
+    "BacillusSubtilis": EX.BacillusSubtilis
+}
+for name, uri in beneficios.items():
+    g.add((uri, RDF.type, EX.Beneficio))
+    g.add((uri, RDFS.label, Literal(name)))
+
+# Enfermedades
+enfermedades = {
+    "Mildiu": EX.Mildiu,
+    "Rizoctonia": EX.Rizoctonia,
+    "VirusMozaico": EX.VirusMozaico,
+    "PudricionRizal": EX.PudricionRizal
+}
+for name, uri in enfermedades.items():
+    g.add((uri, RDF.type, EX.Enfermedad))
+    g.add((uri, RDFS.label, Literal(name)))
 ```
-#### Explicación:
+#### Explicación
+
+En este bloque se crean **individuos** (ejemplares concretos) para cada clase principal de la ontología, como cultivos, suelos, plagas, fertilizantes, sistemas de riego, nutrientes, prácticas agrícolas, climas, beneficios y enfermedades.
+
+Cada individuo se añade con:
+- **`rdf:type`** → indica a qué clase pertenece (ej. `ex:Maiz rdf:type ex:Cultivo`).
+- **`rdfs:label`** → un nombre legible para humanos.
+- **`foaf:name`** (solo en cultivos) → se usa una propiedad estándar de FOAF para almacenar el nombre de un individuo de forma semántica y reutilizable en otras ontologías.
+
+Así, por ejemplo:
+- `ex:Maiz` queda definido como un individuo de la clase `ex:Cultivo`.  
+- `ex:SueloArcilloso` es un individuo de la clase `ex:Suelo`.  
+- `ex:Langosta` es un individuo de la clase `ex:Plaga`.  
+
+Este paso permite poblar la ontología con ejemplos reales que luego serán utilizados por el razonador para inferir nuevo conocimiento.  
 
 ---
 
 #### 6. Añadir algunas relaciones entre individuos (hechos) para que el razonador pueda inferir
+
+En este bloque se agregan **triples concretos** (hechos) que relacionan individuos entre sí o con valores literales. 
+
+Esto permite que el razonador use las **propiedades con dominio y rango** definidas antes para **inferir nuevo conocimiento** automáticamente.
+
 ```python
+# Maíz se cultiva en SueloFranco (subject ya es tipo Cultivo -> inferencias por domain/range)
+g.add((EX.Maiz, EX.seCultivaEn, EX.SueloFranco))
+g.add((EX.Trigo, EX.seCultivaEn, EX.SueloLimoso))
+g.add((EX.Arroz, EX.seCultivaEn, EX.SueloArcilloso))
+g.add((EX.Frijol, EX.seCultivaEn, EX.SueloArenoso))
+
+# Plagas sobre cultivos (y usamos reduceRendimiento que es subPropertyOf afecta)
+g.add((EX.Langosta, EX.reduceRendimiento, EX.Maiz))
+g.add((EX.GusanoCogollero, EX.reduceRendimiento, EX.Trigo))
+g.add((EX.MoscaBlanca, EX.reduceRendimiento, EX.Frijol))
+g.add((EX.Roya, EX.reduceRendimiento, EX.Arroz))
+
+# Fertilizantes contienen nutrientes y recomendados
+g.add((EX.Nitrogenado, EX.contieneNutriente, EX.Nitrogeno))
+g.add((EX.Fosfatado, EX.contieneNutriente, EX.Fosforo))
+g.add((EX.Potasico, EX.contieneNutriente, EX.Potasio))
+g.add((EX.Compost, EX.contieneNutriente, EX.Calcio))
+
+g.add((EX.Nitrogenado, EX.recomendadoPara, EX.Maiz))
+g.add((EX.Compost, EX.recomendadoPara, EX.Frijol))
+g.add((EX.Potasico, EX.recomendadoPara, EX.Trigo))
+
+# Sistema de riego compatible con cultivos
+g.add((EX.RiegoPorGoteo, EX.esCompatibleCon, EX.Maiz))
+g.add((EX.RiegoPorAspersion, EX.esCompatibleCon, EX.Trigo))
+g.add((EX.RiegoManual, EX.esCompatibleCon, EX.Frijol))
+
+# Propiedades literales: pH y humedad de suelos (typed literals)
+g.add((EX.SueloFranco, EX.tienePH, Literal("6.5", datatype=XSD.decimal)))
+g.add((EX.SueloArcilloso, EX.tienePH, Literal("5.8", datatype=XSD.decimal)))
+g.add((EX.SueloArenoso, EX.tienePH, Literal("6.8", datatype=XSD.decimal)))
+g.add((EX.SueloLimoso, EX.tienePH, Literal("6.0", datatype=XSD.decimal)))
+
+g.add((EX.SueloFranco, EX.tieneHumedad, Literal("0.35", datatype=XSD.decimal)))
+g.add((EX.SueloArcilloso, EX.tieneHumedad, Literal("0.45", datatype=XSD.decimal)))
+g.add((EX.SueloArenoso, EX.tieneHumedad, Literal("0.20", datatype=XSD.decimal)))
+g.add((EX.SueloLimoso, EX.tieneHumedad, Literal("0.30", datatype=XSD.decimal)))
+
+# tiempo de cosecha (ejemplo de literal integer)
+g.add((EX.Maiz, EX.tiempoCosecha, Literal("120", datatype=XSD.integer)))
+g.add((EX.Trigo, EX.tiempoCosecha, Literal("110", datatype=XSD.integer)))
 ```
 #### Explicación:
 
+- **Cultivo → Suelo**  
+  ```ttl
+  ex:Maiz ex:seCultivaEn ex:SueloFranco .
+  ```
+  Como `seCultivaEn` tiene dominio `ex:Cultivo` y rango `ex:Suelo`, el razonador puede verificar que:
+  - `ex:Maiz` efectivamente es un `ex:Cultivo`.  
+  - `ex:SueloFranco` es un `ex:Suelo`.
+
+- **Plagas que afectan cultivos**  
+  Se usa la propiedad `reduceRendimiento` (subPropertyOf `afecta`):
+  ```ttl
+  ex:Langosta ex:reduceRendimiento ex:Maiz .
+  ```
+  Esto implica que `Langosta` también **afecta** al `Maiz`, gracias a la jerarquía de propiedades.
+
+- **Fertilizantes y nutrientes**  
+  ```ttl
+  ex:Nitrogenado ex:contieneNutriente ex:Nitrogeno .
+  ex:Nitrogenado ex:recomendadoPara ex:Maiz .
+  ```
+  El razonador puede concluir que el `ex:Nitrogenado` es útil en cultivos de `ex:Maiz`.
+
+- **Compatibilidad con sistemas de riego**  
+  ```ttl
+  ex:RiegoPorGoteo ex:esCompatibleCon ex:Maiz .
+  ```
+
+- **Propiedades literales de suelos**  
+  Se añaden valores tipados (`xsd:decimal`, `xsd:integer`) para pH, humedad y tiempo de cosecha:
+  ```ttl
+  ex:SueloFranco ex:tienePH "6.5"^^xsd:decimal .
+  ex:Maiz ex:tiempoCosecha "120"^^xsd:integer .
+  ```
+  
 ---
 
 #### 7. Guardar estado previo del razonamiento (para comparar)
+
+En esta parte lo que hacemos es **guardar un “snapshot” del grafo antes de aplicar el razonador**.  
+
+Esto sirve para después comparar cuántos triples había originalmente y cuántos se generaron tras las inferencias.
+
 ```python
+before_triples = set(g)
+print("Triples antes del razonador:", len(before_triples))
+
+# Serializar la ontología previa (Turtle)
+g.serialize(destination="ontologia_pre_razonador.ttl", format="turtle")
+print("Ontología previa serializada: ontologia_pre_razonador.ttl")
 ```
 #### Explicación:
+
+- `before_triples = set(g)`  
+  Convierte el grafo en un conjunto de triples.  
+  Así podemos contar fácilmente cuántos había (`len(before_triples)`).
+
+- `g.serialize(destination="ontologia_pre_razonador.ttl", format="turtle")`  
+  Serializa el grafo en formato **Turtle** y lo guarda en un archivo llamado `ontologia_pre_razonador.ttl`.  
+  Este archivo contiene solo lo que hemos definido manualmente (sin razonamiento aún).
+
+Ejemplo de salida esperada:
+```txt
+Triples antes del razonador: 201
+Ontología previa serializada: ontologia_pre_razonador.ttl
+```
+
+👉 Así, cuando corramos el razonador en el siguiente paso, podremos medir cuántos triples nuevos se infirieron.
 
 ---
 
 #### 8. Aplicar razonamiento RDFS con OWL-RL (DeductiveClosure)
 ```python
+DeductiveClosure(RDFS_Semantics).expand(g)
 ```
 #### Explicación:
+
+- **Qué hace:** aplica las reglas de inferencia RDFS/OWL-RL sobre el grafo `g` y **añade triples inferidos** automáticamente (por ejemplo: transitividad de `rdfs:subClassOf`, herencia por `rdfs:subPropertyOf`, inferencias a partir de `rdfs:domain`/`rdfs:range`, etc.).
+
+- **Efecto en el grafo:** modifica `g` **in-place**; después de ejecutar `expand(g)` el grafo contendrá tanto los triples originales como los nuevos triples inferidos.
+
+- **Ejemplos de inferencias típicas:**
+  - Si `ex:reduceRendimiento rdfs:subPropertyOf ex:afecta` y existe `ex:Langosta ex:reduceRendimiento ex:Maiz` → el razonador infiere `ex:Langosta ex:afecta ex:Maiz`.
+  - Si `ex:seCultivaEn rdfs:domain ex:Cultivo` y existe `ex:Maiz ex:seCultivaEn ex:SueloFranco` → el razonador puede inferir `ex:Maiz rdf:type ex:Cultivo` (si no estaba explícito).
 
 ---
 
 #### 9. Comparar y mostrar inferencias nuevas
 ```python
+after_triples = set(g)
+print("Triples después del razonador:", len(after_triples))
+
+inferred = after_triples - before_triples
+print("Nuevos triples inferidos por el razonador (ejemplos, hasta 40):", len(inferred))
+# Mostrar hasta 40 triples inferidos para inspección
+count = 0
+for s,p,o in inferred:
+    # imprimimos en forma legible
+    print(f"- {s}  {p}  {o}")
+    count += 1
+    if count >= 40:
+        break
+
+# Verificar al menos 4 hechos inferidos (condición ejercicio)
+if len(inferred) >= 4:
+    print("✅ Se infirieron al menos 4 hechos nuevos.")
+else:
+    print("⚠️ No se detectaron 4 hechos inferidos (revisar la ontología).")
 ```
 #### Explicación:
+
+- `after_triples = set(g)` → guarda el conjunto de triples **después del razonador**.
+- `inferred = after_triples - before_triples` → resta conjuntos: deja **solo los triples nuevos** que antes no existían.
+- El bucle `for s,p,o in inferred:` → recorre cada nuevo triple (sujeto, predicado, objeto).
+- `count >= 40` → corta la impresión si hay demasiados, mostrando solo los primeros 40.
+- El `if len(inferred) >= 4` → comprueba la condición del ejercicio: confirmar al menos 4 inferencias nuevas.
 
 ---
 
 #### 10. Serializar grafo final (post-razonador) en Turtle
 ```python
+g.serialize(destination="ontologia_post_razonador.ttl", format="turtle")
+print("Ontología post-razonador serializada: ontologia_post_razonador.ttl")
 ```
 #### Explicación:
+
+- `g.serialize(...)` → convierte el grafo `g` en texto Turtle y lo escribe en un archivo.
+  - `destination="ontologia_post_razonador.ttl"` → nombre del archivo de salida.
+  - `format="turtle" `→ formato de serialización.
+
+- Este grafo ya contiene:
+1. Los **triples base** que definimos manualmente.
+2. Los **triples inferidos** automáticamente por el razonador.
+- La impresión en consola confirma que el archivo se generó.
 
 ---
 
 #### 11. Función para buscar triples por patrón
 ```python
+def buscar(s=None,p=None,o=None, limit=20):
+    results = list(g.triples((s,p,o)))
+    print(f"Resultados: {len(results)} (mostrando hasta {limit})")
+    for i, (ss,pp,oo) in enumerate(results):
+        if i >= limit:
+            break
+        print(ss, pp, oo)
+
+# Ejemplo: buscar todo lo relacionado con Maiz
+print("\n--- Ejemplo: triples (Maiz, ?, ?) ---")
+buscar(EX.Maiz, None, None, limit=40)
 ```
 #### Explicación:
+
+- **La función** `buscar` permite consultar triples dentro del grafo RDF.
+- **Parámetros opcionales** (`s`, `p`, `o`):
+   - Si se especifican, filtran por sujeto, predicado u objeto.
+   - Si se deja en `None`, no se filtra por ese campo.
+- **Consulta de triples**: `g.triples((s,p,o))` devuelve todos los que cumplen el patrón.
+- **Control de salida (`limit`)**: restringe la cantidad de resultados mostrados.
+- **Ejemplo con `EX.Maiz`**: imprime todas las propiedades y relaciones en las que aparece el *individuo Maíz*.
 
 ---
 
