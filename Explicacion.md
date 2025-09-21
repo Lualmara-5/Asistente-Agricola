@@ -615,6 +615,129 @@ buscar(EX.Maiz, None, None, limit=40)
 ---
 
 ### 🌫️ Lógica Difusa: Humedad, Temperatura, Radiación
+
+#### 1. Definir variables de entrada (Antecedents) y salida (Consequent)
+```python
+# Universo de discurso
+humedad = ctrl.Antecedent(np.arange(0, 101, 1), 'humedad')        # %
+temperatura = ctrl.Antecedent(np.arange(0, 51, 1), 'temperatura') # °C
+radiacion = ctrl.Antecedent(np.arange(0, 1001, 1), 'radiacion')   # W/m2
+riego = ctrl.Consequent(np.arange(0, 101, 1), 'riego')            # % de intensidad
+```
+#### Explicación:
+
+Aquí se establecen las **variables difusas** del sistema:
+
+- **Entradas (Antecedents)**:
+   - **Humedad**: definida en un rango de 0 a 100 (%)
+   - **Temperatura**: definida en un rango de 0 a 50 (°C)
+   - **Radiación**: definida en un rango de 0 a 1000 (W/m²)
+
+- **Salida (Consequent)**:
+   - **Riego**: intensidad de riego en porcentaje (0 a 100).
+
+Estas variables conforman el **universo de discurso**, que es el rango de valores dentro del cual se evaluará la lógica difusa.
+
+---
+
+#### 2. Funciones de pertenencia (triangular, trapezoidal, gaussiana)
+```python
+# Humedad
+humedad['baja'] = fuzz.trimf(humedad.universe, [0, 0, 50])       # Triangular
+humedad['media'] = fuzz.trapmf(humedad.universe, [30, 40, 60, 70]) # Trapezoidal
+humedad['alta'] = fuzz.gaussmf(humedad.universe, 80, 10)         # Gaussiana
+
+# Temperatura
+temperatura['fria'] = fuzz.trimf(temperatura.universe, [0, 0, 20])
+temperatura['templada'] = fuzz.trapmf(temperatura.universe, [15, 20, 25, 30])
+temperatura['caliente'] = fuzz.gaussmf(temperatura.universe, 35, 5)
+
+# Radiación
+radiacion['baja'] = fuzz.trimf(radiacion.universe, [0, 0, 300])
+radiacion['media'] = fuzz.trapmf(radiacion.universe, [200, 400, 600, 800])
+radiacion['alta'] = fuzz.gaussmf(radiacion.universe, 900, 50)
+
+# Riego (salida)
+riego['bajo'] = fuzz.trimf(riego.universe, [0, 0, 40])
+riego['medio'] = fuzz.trapmf(riego.universe, [30, 40, 60, 70])
+riego['alto'] = fuzz.gaussmf(riego.universe, 90, 10)
+```
+#### Explicación:
+
+---
+
+#### 3. Modificadores (muy, ligeramente)
+```python
+# Usamos funciones matemáticas:
+  # "muy" -> elevar al cuadrado
+  # "ligeramente" -> raíz cuadrada
+# Ejemplo: muy_baja_humedad
+
+humedad['muy_baja'] = np.square(humedad['baja'].mf)   # muy -> enfatiza
+humedad['ligeramente_alta'] = np.sqrt(humedad['alta'].mf) # suaviza
+```
+#### Explicación:
+
+---
+
+#### 4. Graficar funciones de pertenencia
+```python
+fig, axes = plt.subplots(nrows=4, figsize=(8, 12))
+
+humedad.view(ax=axes[0])
+temperatura.view(ax=axes[1])
+radiacion.view(ax=axes[2])
+riego.view(ax=axes[3])
+
+plt.tight_layout()
+plt.show()
+```
+#### Explicación:
+
+---
+
+#### 5. Reglas difusas (≥9 reglas, usando AND, OR, NOT)
+```python
+rule1 = ctrl.Rule(humedad['baja'] & temperatura['caliente'], riego['alto'])
+rule2 = ctrl.Rule(humedad['media'] & temperatura['templada'], riego['medio'])
+rule3 = ctrl.Rule(humedad['alta'] & temperatura['fria'], riego['bajo'])
+rule4 = ctrl.Rule(radiacion['alta'] & humedad['media'], riego['alto'])
+rule5 = ctrl.Rule(radiacion['baja'] & temperatura['fria'], riego['bajo'])
+rule6 = ctrl.Rule(~humedad['alta'] & temperatura['caliente'], riego['alto'])  # NOT
+rule7 = ctrl.Rule(humedad['muy_baja'] | radiacion['alta'], riego['alto'])     # OR
+rule8 = ctrl.Rule(humedad['ligeramente_alta'] & temperatura['templada'], riego['medio'])
+rule9 = ctrl.Rule(temperatura['caliente'] & radiacion['media'], riego['alto'])
+```
+#### Explicación:
+
+---
+
+#### 6. Construir sistema difuso
+```python
+controlador_riego = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9])
+simulador_riego = ctrl.ControlSystemSimulation(controlador_riego)
+```
+#### Explicación:
+
+---
+
+#### 7. Probar con valores de ejemplo y defuzzificación (centroide)
+```python
+simulador_riego.input['humedad'] = 40     # %
+simulador_riego.input['temperatura'] = 30  # °C
+simulador_riego.input['radiacion'] = 700   # W/m2
+
+simulador_riego.compute()
+
+print("Intensidad de riego recomendada:", simulador_riego.output['riego'])
+riego.view(sim=simulador_riego)
+
+plt.show()
+```
+#### Explicación:
+
+---
+
 ### 🤖 Sistema Experto (Experta)
 
 ---
