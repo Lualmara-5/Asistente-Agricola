@@ -663,6 +663,11 @@ riego['medio'] = fuzz.trapmf(riego.universe, [30, 40, 60, 70])
 riego['alto'] = fuzz.gaussmf(riego.universe, 90, 10)
 ```
 #### Explicación:
+Cada función de pertenencia representa cómo se clasifican **los valores dentro de categorías lingüísticas** como *baja, media, alta*.
+
+- **Triangular (`trimf`)** → Se usa cuando la transición entre valores es simple y simétrica.
+- **Trapezoidal (`trapmf`)** → Útil para rangos más amplios, con un “plateau” en el medio.
+- **Gaussiana (`gaussmf`)** → Modela transiciones suaves y continuas.
 
 ---
 
@@ -677,6 +682,18 @@ humedad['muy_baja'] = np.square(humedad['baja'].mf)   # muy -> enfatiza
 humedad['ligeramente_alta'] = np.sqrt(humedad['alta'].mf) # suaviza
 ```
 #### Explicación:
+
+🔹 **Qué pasa aquí**:
+
+- Los **modificadores lingüísticos** permiten refinar etiquetas como “muy” o “ligeramente”.
+- Matemáticamente:
+   - **“Muy”** se implementa elevando al cuadrado la función de pertenencia → esto hace que los valores intermedios bajen más rápido y solo los más altos mantengan pertenencia significativa (refuerza la pertenencia fuerte).
+   - **“Ligeramente”** se implementa con raíz cuadrada → suaviza la curva, aumentando los valores pequeños de pertenencia (es más permisivo).
+
+🔹 **Ejemplo intuitivo**:
+
+- Si alguien dice “muy bajo nivel de humedad”, se refiere a que solo humedades extremadamente bajas entran en esa categoría.
+- Si alguien dice “ligeramente alta humedad”, hasta valores que no son tan altos se consideran dentro del rango.
 
 ---
 
@@ -694,6 +711,12 @@ plt.show()
 ```
 #### Explicación:
 
+- Usamos .view() de scikit-fuzzy para visualizar las funciones de pertenencia definidas.
+- Cada variable (humedad, temperatura, radiación, riego) se grafica en un **subplot diferente**, mostrando cómo están distribuidas sus etiquetas (baja, media, alta, etc.).
+- Esto es clave para verificar si las funciones se solapan de manera correcta y si cubren todo el universo de discurso.
+
+Es como dibujar un mapa de categorías. Antes de usar reglas difusas, necesitamos ver si realmente la “temperatura templada” queda entre la “fría” y la “caliente” de forma coherente.
+
 ---
 
 #### 5. Reglas difusas (≥9 reglas, usando AND, OR, NOT)
@@ -710,6 +733,18 @@ rule9 = ctrl.Rule(temperatura['caliente'] & radiacion['media'], riego['alto'])
 ```
 #### Explicación:
 
+- Cada **regla difusa** tiene la forma: **SI (condición) ENTONCES (acción)**.
+- Se combinan entradas con operadores lógicos:
+   - `&` → **AND** (intersección).
+   - `|` → **OR** (unión).
+   - `~` → **NOT** (complemento).
+- Ejemplos:
+   - *SI la humedad es baja Y la temperatura es caliente → riego alto*.
+   - *SI la radiación es baja Y la temperatura es fría → riego bajo*.
+   - *SI NO hay humedad alta Y la temperatura es caliente → riego alto*.
+
+👉 Con estas 9 reglas, se cubren diferentes combinaciones de condiciones ambientales.
+
 ---
 
 #### 6. Construir sistema difuso
@@ -718,6 +753,11 @@ controlador_riego = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6
 simulador_riego = ctrl.ControlSystemSimulation(controlador_riego)
 ```
 #### Explicación:
+
+- `ControlSystem` → recibe todas las reglas definidas.
+- `ControlSystemSimulation` → permite ejecutar el sistema para **probar valores reales de entrada**.
+
+👉 Es como “conectar el motor de inferencia” que usará las reglas para razonar.
 
 ---
 
@@ -735,6 +775,14 @@ riego.view(sim=simulador_riego)
 plt.show()
 ```
 #### Explicación:
+
+- Se ingresan valores reales de **humedad, temperatura y radiación**.
+- `.compute()` aplica las reglas y obtiene un resultado difuso.
+- Luego se aplica **defuzzificación** (método del centroide, por defecto en `skfuzzy`).
+- El resultado es un número “crisp” → en este caso, el **% de intensidad de riego recomendado**.
+- Con `.view(sim=...)` se grafica dónde cae ese resultado en la variable de salida.
+
+👉 Ejemplo: si el resultado es `68.5`, significa que el sistema recomienda un riego medio-alto.
 
 ---
 
